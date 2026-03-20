@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { HowItWorks } from './components/HowItWorks'
 import { Features } from './components/Features'
 import { Footer } from './components/Footer'
+import { QrGenerator } from './components/QrGenerator'
 import { trackPage } from '../lib/analytics'
 
 // Small helper: emit a custom event whenever history.pushState/replaceState is called
@@ -24,24 +25,23 @@ function bindHistoryListener() {
 }
 
 export default function App() {
+  const [route, setRoute] = useState(() => normalizeRoute(window.location.pathname))
+
   useEffect(() => {
-    // Initial page view
-    try {
-      trackPage(window.location.pathname)
-    } catch (e) {
-      // ignore if analytics not initialized
-    }
-
-    // Bind history changes for SPA-style navigation
-    bindHistoryListener()
-
     const onLocationChange = () => {
+      setRoute(normalizeRoute(window.location.pathname))
       try {
         trackPage(window.location.pathname)
       } catch (e) {
         // noop
       }
     }
+
+    // Initial page view
+    onLocationChange()
+
+    // Bind history changes for SPA-style navigation
+    bindHistoryListener()
 
     window.addEventListener('popstate', onLocationChange)
     window.addEventListener('locationchange', onLocationChange)
@@ -52,15 +52,43 @@ export default function App() {
     }
   }, [])
 
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-      <main className="flex-1">
+  const navigate = (path: string) => {
+    const next = normalizeRoute(path)
+    if (next === route) return
+    window.history.pushState({}, '', next)
+    setRoute(next)
+    try {
+      trackPage(next)
+    } catch (e) {}
+  }
+
+  const renderRoute = () => {
+    if (route === '/generador-qr') {
+      return <QrGenerator />
+    }
+    // default: imágenes a PDF
+    return (
+      <>
         <Hero />
         <HowItWorks />
         <Features />
+      </>
+    )
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar currentRoute={route} onNavigate={navigate} />
+      <main className="flex-1">
+        {renderRoute()}
       </main>
       <Footer />
     </div>
   )
+}
+
+function normalizeRoute(path: string) {
+  if (path === '/generador-qr') return '/generador-qr'
+  // default route for imágenes a pdf
+  return '/img-a-pdf'
 }
