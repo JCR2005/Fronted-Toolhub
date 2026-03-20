@@ -11,7 +11,7 @@ export function Hero() {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+  const apiUrl = import.meta.env.VITE_API_URL ?? 'https://toolhub-wtdi.onrender.com';
   const maxFileSizeBytes = 50 * 1024 * 1024;
 
   const previewItems = useMemo(() => {
