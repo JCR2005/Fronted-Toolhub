@@ -5,9 +5,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>toolhub-app</title>
-    <!-- Google Analytics moved to runtime and conditioned on user consent. -->
-    <!-- The CookieConsent component will inject gtag.js only after the user accepts and if
-         VITE_GA_MEASUREMENT_ID is set in the environment. -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2D03R2HBMN"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2D03R2HBMN');
+    </script>
   </head>
   <body>
     <div id="root"></div>
